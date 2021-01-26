@@ -110,9 +110,9 @@ static gboolean draw_cb (GtkWidget *widget, cairo_t *cr, CustomData *data) {
 static void slider_cb (GtkRange *range, CustomData *data) {
   gdouble value = gtk_range_get_value (GTK_RANGE (data->slider));
   printf ("Starting Seek\n");
-  gst_element_seek_simple (data->pipeline, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT | GST_SEEK_FLAG_TRICKMODE , (gint64)(value * GST_SECOND));
+  gst_element_seek_simple (data->pipeline, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_TRICKMODE , (gint64)(value * GST_SECOND));
   printf ("Attempted Seek\n");
-  // 
+  // | GST_SEEK_FLAG_KEY_UNIT 
 }
 
 /* This creates all the GTK+ widgets that compose our application, and registers the callbacks */
@@ -370,9 +370,9 @@ int main(int argc, char *argv[])
     data.source2 = gst_element_factory_make ("souphttpsrc", "source2");
     //data.source = gst_element_factory_make ("filesrc", "source");
     data.demuxer = gst_element_factory_make ("matroskademux", "demuxer");
-    data.demuxer2 = gst_element_factory_make ("qtdemux", "demuxer2");
+    data.demuxer2 = gst_element_factory_make ("matroskademux", "demuxer2");
     data.audioqueue = gst_element_factory_make("queue","audioqueue");
-    data.audio_decoder = gst_element_factory_make ("avdec_aac", "audio_decoder");
+    data.audio_decoder = gst_element_factory_make ("avdec_opus", "audio_decoder");
     data.audio_convert = gst_element_factory_make ("audioconvert", "audio_convert");
     data.audio_sink = gst_element_factory_make ("pulsesink", "audio_sink");
     //data.avc_parser = gst_element_factory_make ("h264parse", "avc_parser");
@@ -421,7 +421,6 @@ int main(int argc, char *argv[])
     g_object_set (data.source, "is-live", TRUE, NULL);
     g_object_set (data.source2, "location", argv[2], NULL);
     g_object_set (data.source2, "is-live", TRUE, NULL);
-
 
     g_signal_connect (data.demuxer, "pad-added", G_CALLBACK (pad_added_handler), &data);
     g_signal_connect (data.demuxer2, "pad-added", G_CALLBACK (pad_added_handler), &data);
