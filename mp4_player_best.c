@@ -110,7 +110,7 @@ static gboolean draw_cb (GtkWidget *widget, cairo_t *cr, CustomData *data) {
 static void slider_cb (GtkRange *range, CustomData *data) {
   gdouble value = gtk_range_get_value (GTK_RANGE (data->slider));
   printf ("Starting Seek\n");
-  gst_element_seek_simple (data->pipeline, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT | GST_SEEK_FLAG_TRICKMODE , (gint64)(value * GST_SECOND));
+  gst_element_seek_simple (data->pipeline, GST_FORMAT_TIME, GST_SEEK_FLAG_FLUSH  | GST_SEEK_FLAG_TRICKMODE , (gint64)(value * GST_SECOND));
   printf ("Attempted Seek\n");
   // 
 }
@@ -366,13 +366,21 @@ int main(int argc, char *argv[])
     //loop = g_main_loop_new (NULL, FALSE);
 
     /* Create the elements */
+    if (argv[2] == NULL){
+		data.demuxer2 = gst_element_factory_make ("qtdemux", "demuxer2");
+		data.audio_decoder = gst_element_factory_make ("avdec_aac", "audio_decoder");
+	}
+	else {
+		data.demuxer2 = gst_element_factory_make ("qtdemux", "demuxer2");
+		data.audio_decoder = gst_element_factory_make ("avdec_aac", "audio_decoder");
+	}
     data.source = gst_element_factory_make ("souphttpsrc", "source");
     data.source2 = gst_element_factory_make ("souphttpsrc", "source2");
     //data.source = gst_element_factory_make ("filesrc", "source");
     data.demuxer = gst_element_factory_make ("qtdemux", "demuxer");
-    data.demuxer2 = gst_element_factory_make ("qtdemux", "demuxer2");
+    
     data.audioqueue = gst_element_factory_make("queue","audioqueue");
-    data.audio_decoder = gst_element_factory_make ("avdec_aac", "audio_decoder");
+    
     data.audio_convert = gst_element_factory_make ("audioconvert", "audio_convert");
     data.audio_sink = gst_element_factory_make ("pulsesink", "audio_sink");
     data.avc_parser = gst_element_factory_make ("h264parse", "avc_parser");
@@ -388,20 +396,25 @@ int main(int argc, char *argv[])
     g_printerr ("Not all elements could be created.\n");
     return -1;
     }
-
-    gst_bin_add_many (GST_BIN (data.pipeline),data.source,data.demuxer,data.videoqueue,data.avc_parser, data.video_decoder,data.video_convert,data.video_sink,data.source2,data.demuxer2,data.audioqueue,data.audio_decoder,data.audio_convert,data.audio_sink, NULL);
-
+    if (argv[2] == NULL){
+		gst_bin_add_many (GST_BIN (data.pipeline),data.source,data.demuxer,data.videoqueue,data.avc_parser, data.video_decoder,data.video_convert,data.video_sink,data.audioqueue,data.audio_decoder,data.audio_convert,data.audio_sink, NULL);
+    }
+    else {
+        gst_bin_add_many (GST_BIN (data.pipeline),data.source,data.demuxer,data.videoqueue,data.avc_parser, data.video_decoder,data.video_convert,data.video_sink,data.source2,data.demuxer2,data.audioqueue,data.audio_decoder,data.audio_convert,data.audio_sink, NULL);
+    }
     if (!gst_element_link(data.source,data.demuxer)) {
     g_printerr ("Elements could not be linked.\n");
     gst_object_unref (data.pipeline);
     return -1;
     }
+    if (argv[2] == NULL) {}
+    else {
     if (!gst_element_link(data.source2,data.demuxer2)) {
     g_printerr ("Elements could not be linked.\n");
     gst_object_unref (data.pipeline);
     return -1;
     } 
-
+    }
     if (!gst_element_link_many (data.audioqueue,data.audio_decoder,data.audio_convert, data.audio_sink,NULL)) {
     g_printerr (" audio Elements could not be linked.\n");
     gst_object_unref (data.pipeline);
@@ -414,18 +427,29 @@ int main(int argc, char *argv[])
         return -1;
     }
    
-
+	
     g_print("Reached here\n");
     /* Set the file to play */
-    g_object_set (data.source, "location", argv[1], NULL);
+    if (argv[2] == NULL){
+		g_print("One arg\n");
+		g_object_set (data.source, "location", argv[1], NULL);
+        g_object_set (data.source2, "location", argv[1], NULL);
+	}
+	else {
+		g_print("Two args\n");
+		g_object_set (data.source, "location", argv[1], NULL);
+        g_object_set (data.source2, "location", argv[2], NULL); 
+	}
     g_object_set (data.source, "is-live", TRUE, NULL);
-    g_object_set (data.source2, "location", argv[2], NULL);
+    
     g_object_set (data.source2, "is-live", TRUE, NULL);
 
 
     g_signal_connect (data.demuxer, "pad-added", G_CALLBACK (pad_added_handler), &data);
+    if (argv[2] == NULL){}
+    else {
     g_signal_connect (data.demuxer2, "pad-added", G_CALLBACK (pad_added_handler), &data);
-    
+    }
     /* Create the GUI */
     
     g_print("Before UI\n");

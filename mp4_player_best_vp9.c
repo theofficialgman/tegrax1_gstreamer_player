@@ -159,7 +159,7 @@ static void create_ui (CustomData *data) {
 
   main_hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start (GTK_BOX (main_hbox), video_window, TRUE, TRUE, 0);
-  gtk_box_pack_start (GTK_BOX (main_hbox), data->streams_list, FALSE, FALSE, 2);
+  //gtk_box_pack_start (GTK_BOX (main_hbox), data->streams_list, FALSE, FALSE, 2);
 
   main_box = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
   gtk_box_pack_start (GTK_BOX (main_box), main_hbox, TRUE, TRUE, 0);
@@ -168,6 +168,7 @@ static void create_ui (CustomData *data) {
   gtk_window_set_default_size (GTK_WINDOW (main_window), 1280, 720);
 
   gtk_widget_show_all (main_window);
+  gtk_window_fullscreen (GTK_WINDOW(main_window));
 }
 
 /* This function is called periodically to refresh the GUI */
