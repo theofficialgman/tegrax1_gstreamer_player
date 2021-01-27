@@ -5,7 +5,7 @@ Tegra Gstreamer video player still in the works
 Don't expect great compatibility or reliability
 
 Run the player as seen below for youtube videos
-
+for vp9
 ```./mp4_player_best_vp9 $(youtube-dl --format "bestvideo[vcodec=vp9][height<=?1080][protocol=https]+bestaudio[ext=webm][protocol=https]" --get-url https://www.youtube.com/watch?v=Y8fiOMU-dQQ)```
 or for h.264
 ```./mp4_player_best $(youtube-dl --format "best[ext=mp4][height<=?1080][protocol=https]" --get-url https://www.youtube.com/watch?v=Y8fiOMU-dQQ)```
