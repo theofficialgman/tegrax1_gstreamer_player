@@ -81,6 +81,13 @@ static void stop_cb (GtkButton *button, CustomData *data) {
   gst_element_set_state (data->pipeline, GST_STATE_READY);
 }
 
+
+/* This function is called when the EXIT button is clicked */
+static void exit_cb (GtkButton *button, CustomData *data) {
+  stop_cb (NULL, data);
+  gtk_main_quit ();
+}
+
 /* This function is called when the main window is closed */
 static void delete_event_cb (GtkWidget *widget, GdkEvent *event, CustomData *data) {
   stop_cb (NULL, data);
@@ -122,7 +129,7 @@ static void create_ui (CustomData *data) {
   GtkWidget *main_box;     /* VBox to hold main_hbox and the controls */
   GtkWidget *main_hbox;    /* HBox to hold the video_window and the stream info text widget */
   GtkWidget *controls;     /* HBox to hold the buttons and the slider */
-  GtkWidget *play_button, *pause_button, *stop_button; /* Buttons */
+  GtkWidget *play_button, *pause_button, *stop_button, *exit_button; /* Buttons */
   printf ("Before window new\n");
   main_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   printf ("Before delete window\n");
@@ -146,6 +153,9 @@ static void create_ui (CustomData *data) {
   data->slider = gtk_scale_new_with_range (GTK_ORIENTATION_HORIZONTAL, 0, 100, 1);
   gtk_scale_set_draw_value (GTK_SCALE (data->slider), 0);
   data->slider_update_signal_id = g_signal_connect (G_OBJECT (data->slider), "value-changed", G_CALLBACK (slider_cb), data);
+	
+  exit_button = gtk_button_new_from_icon_name ("application-exit", GTK_ICON_SIZE_SMALL_TOOLBAR);
+  g_signal_connect (G_OBJECT (stop_button), "clicked", G_CALLBACK (stop_cb), data);
 
   data->streams_list = gtk_text_view_new ();
   gtk_text_view_set_editable (GTK_TEXT_VIEW (data->streams_list), FALSE);
