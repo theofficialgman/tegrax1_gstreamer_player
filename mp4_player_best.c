@@ -165,6 +165,7 @@ static void create_ui (CustomData *data) {
   gtk_box_pack_start (GTK_BOX (controls), pause_button, FALSE, FALSE, 2);
   gtk_box_pack_start (GTK_BOX (controls), stop_button, FALSE, FALSE, 2);
   gtk_box_pack_start (GTK_BOX (controls), data->slider, TRUE, TRUE, 2);
+  gtk_box_pack_start (GTK_BOX (controls), exit_button, FALSE, FALSE, 2);
 
   main_hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
   gtk_box_pack_start (GTK_BOX (main_hbox), video_window, TRUE, TRUE, 0);
