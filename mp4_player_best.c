@@ -128,7 +128,7 @@ static void create_ui (CustomData *data) {
   GtkWidget *main_box;     /* VBox to hold main_hbox and the controls */
   GtkWidget *main_hbox;    /* HBox to hold the video_window and the stream info text widget */
   GtkWidget *controls;     /* HBox to hold the buttons and the slider */
-  GtkWidget *play_button, *pause_button, *stop_button; /* Buttons */
+  GtkWidget *play_button, *pause_button, *stop_button, *exit_button; /* Buttons */
   printf ("Before window new\n");
   main_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   printf ("Before delete window\n");
