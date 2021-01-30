@@ -154,7 +154,7 @@ static void create_ui (CustomData *data) {
   data->slider_update_signal_id = g_signal_connect (G_OBJECT (data->slider), "value-changed", G_CALLBACK (slider_cb), data);
 	
   exit_button = gtk_button_new_from_icon_name ("application-exit", GTK_ICON_SIZE_SMALL_TOOLBAR);
-  g_signal_connect (G_OBJECT (stop_button), "clicked", G_CALLBACK (stop_cb), data);
+  g_signal_connect (G_OBJECT (exit_button), "clicked", G_CALLBACK (exit_cb), data);
 
   data->streams_list = gtk_text_view_new ();
   gtk_text_view_set_editable (GTK_TEXT_VIEW (data->streams_list), FALSE);
